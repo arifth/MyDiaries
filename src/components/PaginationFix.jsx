@@ -12,7 +12,7 @@ export default function PaginationFix({ count }) {
   }
 
   const handleCLick = (id) => {
-    dispatch(WORD_TYPED(id));
+    console.log(id);
   };
 
   return (

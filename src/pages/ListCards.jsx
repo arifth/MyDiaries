@@ -71,7 +71,6 @@ export default function ListCards() {
           </Button>
         </HStack>
         <SearchBox />
-        <PaginationFix count={pageCount} />
         {isLoading && <CatalogMagic />}
         <Box display="flex" flexWrap="wrap" gap="3em">
           {newFilter?.map((val, id) => (
@@ -84,6 +83,7 @@ export default function ListCards() {
             />
           ))}
         </Box>
+        <PaginationFix count={pageCount} />
       </Box>
     </>
   );
