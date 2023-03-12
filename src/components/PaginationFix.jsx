@@ -1,9 +1,9 @@
 import React from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
-import { WORD_TYPED } from "../redux/searchSlice";
+import { NUMBER_CLICKED } from "../redux/searchSlice";
 
-export default function PaginationFix({ count }) {
+export default function PaginationFix({ count, refetch }) {
   const dispatch = useDispatch();
   const totalPage = [];
   console.log(count);
@@ -12,18 +12,13 @@ export default function PaginationFix({ count }) {
   }
 
   const handleCLick = (id) => {
-    console.log(id);
+    dispatch(NUMBER_CLICKED(id + 1));
+    refetch();
   };
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center">
-      <Box
-        width="60vw"
-        display="flex"
-        height="10"
-        gap="1em"
-        justifyContent="space-between"
-      >
+      <Box width="60vw" display="flex" height="10" gap="1em">
         {totalPage.map((button, id) => (
           <Button variant="solid" onClick={() => handleCLick(id)}>
             {button + 1}

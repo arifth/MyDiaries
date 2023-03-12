@@ -23,24 +23,28 @@ export default function ModalRegister({ isOpen, onClose }) {
     password_confirmation: "",
   });
 
-  // handle formik
-
-  const submit = useMutation(() => {
+  const submit = useMutation((e) => {
+    e.preventDefault();
     try {
       const data = authService.register(input);
-      onClose();
+      if (submit.isSuccess) {
+        alert("berhasil daftar");
+        onClose();
+      }
       return data;
     } catch (error) {
       console.log(error);
     }
   });
 
+  console.log(submit.isSuccess);
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered width="50vw">
         <ModalOverlay backdropFilter="blur(10px) hue-rotate(0deg)" />
         <ModalContent bgColor={"hsla(57, 100%, 50%, 1)"} padding={"2rem"}>
-          <form onSubmit={submit}>
+          <form onSubmit={(e) => submit.mutate(e)}>
             <ModalHeader color={"primary"} fontSize={"3rem"}>
               Register
             </ModalHeader>

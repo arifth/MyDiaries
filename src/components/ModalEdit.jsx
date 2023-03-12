@@ -9,13 +9,23 @@ import {
   Input,
   Flex,
   Textarea,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import cardService from "../services/cardService";
+import { useMutation } from "react-query";
 
-export default function ModalEdit({ isOpen, onClose, idCard, title, note }) {
+export default function ModalEdit({
+  isOpen,
+  onClose,
+  idCard,
+  title,
+  note,
+  refetch,
+}) {
   const dispatch = useDispatch();
   const navigation = useNavigate();
   const [alert, setAlert] = useState(false);
@@ -31,13 +41,15 @@ export default function ModalEdit({ isOpen, onClose, idCard, title, note }) {
     });
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useMutation(async (e) => {
+    e.preventDefault();
     const response = await cardService.updateCard(idCard, input);
     if (response.status === 200) {
       setAlert(true);
-      location.reload();
+      onClose();
+      refetch();
     }
-  };
+  });
 
   return (
     <>
@@ -71,10 +83,10 @@ export default function ModalEdit({ isOpen, onClose, idCard, title, note }) {
           <ModalFooter>
             <Button
               backgroundColor={"green.300"}
-              onClick={handleSubmit}
+              onClick={(e) => handleSubmit.mutate(e)}
               width={"100%"}
             >
-              Edit note
+              {handleSubmit.isLoading ? <Spinner /> : <Text>Edit Note</Text>}
             </Button>
             {alert && <Text>Berhasil Update data</Text>}
           </ModalFooter>

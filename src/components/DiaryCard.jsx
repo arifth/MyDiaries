@@ -19,7 +19,7 @@ import { HiArchiveBox } from "react-icons/hi2";
 import cardService from "../services/cardService";
 import ModalEdit from "../components/ModalEdit";
 
-export default function DiaryCard({ idDiary, title, note, date }) {
+export default function DiaryCard({ idDiary, title, note, date, refetch }) {
   const navigate = useNavigate();
 
   const [isToggle, setToggle] = useState(false);
@@ -31,9 +31,9 @@ export default function DiaryCard({ idDiary, title, note, date }) {
     setToggle(false);
   };
 
-  const handleArchieve = () => {
-    cardService.archieveCard(idDiary);
-    location.reload();
+  const handleArchieve = async () => {
+    await cardService.archieveCard(idDiary);
+    refetch();
   };
 
   return (
@@ -44,6 +44,7 @@ export default function DiaryCard({ idDiary, title, note, date }) {
         onClose={handleClose}
         note={note}
         title={title}
+        refetch={refetch}
       />
       <Card
         background="white"

@@ -10,6 +10,7 @@ import {
   Flex,
   Text,
   Alert,
+  Spinner,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import authService from "../services/authService";
@@ -79,7 +80,7 @@ export default function ModalLogin({ isOpen, onClose }) {
               onClick={(e) => handleSubmit.mutate(e)}
               width={"100%"}
             >
-              Login
+              {handleSubmit.isLoading ? <Spinner /> : <Text>Register</Text>}
             </Button>
           </ModalFooter>
           <Text textAlign={"center"} fontSize={"1.5rem"}>

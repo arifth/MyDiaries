@@ -12,17 +12,11 @@ import PaginationFix from "../components/PaginationFix";
 import { useQuery } from "react-query";
 
 export default function ListCards() {
-  const [cards, setCards] = useState([]);
-  const [isLoading, setIsloading] = useState(true);
   const [isToggle, setToggle] = useState(false);
-  const [pageCount, setPageCount] = useState(5);
+  // const [pageCount, setPageCount] = useState(5);
 
   const searchText = useSelector((state) => state.search.searchText);
   const pageNumber = useSelector((state) => state.search.page);
-
-  const newFilter = cards.filter((value) => {
-    return value.title.toLowerCase().includes(searchText.toLowerCase());
-  });
 
   const handleClick = () => {
     setToggle(true);
@@ -32,28 +26,22 @@ export default function ListCards() {
     setToggle(false);
   };
 
-  useEffect(() => {
-    async function fetchdata() {
-      // let { data, isLoading, refetch } = useQuery(
-      //   "listCards",
-      //   cardService.getAllCards(pageNumber)
-      // );
-      // console.log("its here");
-      // console.log(data);
-      const data = await cardService.getAllCards(pageNumber);
-      if (data.status === 200) {
-        setIsloading(false);
-        setCards(data.data.data);
-      }
-    }
-    if (API.defaults.headers.common.Authorization !== null) {
-      fetchdata();
-    }
-  }, []);
+  let { data, isLoading, refetch, isError, isSuccess } = useQuery(
+    "listCards",
+    () => cardService.getAllCards(pageNumber)
+  );
+
+  const response = data?.data?.data;
+
+  const pageCount = Math.ceil(data?.data?.total_data / 10);
+
+  const filter = response?.filter((value) => {
+    return value.title.toLowerCase().includes(searchText?.toLowerCase());
+  });
 
   return (
     <>
-      <ModalCreate isOpen={isToggle} onClose={handleClose} />
+      <ModalCreate isOpen={isToggle} onClose={handleClose} refetch-={refetch} />
       <NavBar />
       <Box
         width={"100vw"}
@@ -73,17 +61,19 @@ export default function ListCards() {
         <SearchBox />
         {isLoading && <CatalogMagic />}
         <Box display="flex" flexWrap="wrap" gap="3em">
-          {newFilter?.map((val, id) => (
-            <DiaryCard
-              key={id}
-              title={val.title}
-              note={val.content}
-              idDiary={val.id}
-              date={val.updated_at}
-            />
-          ))}
+          {filter !== undefined &&
+            filter?.map((val, id) => (
+              <DiaryCard
+                refetch={refetch}
+                key={id}
+                title={val.title}
+                note={val.content}
+                idDiary={val.id}
+                date={val.updated_at}
+              />
+            ))}
         </Box>
-        <PaginationFix count={pageCount} />
+        <PaginationFix count={pageCount} refetch={refetch} />
       </Box>
     </>
   );
