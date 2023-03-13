@@ -18,6 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { HiArchiveBox } from "react-icons/hi2";
 import cardService from "../services/cardService";
 import ModalEdit from "../components/ModalEdit";
+import dayjs from "dayjs";
 
 export default function DiaryCard({ idDiary, title, note, date, refetch }) {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ export default function DiaryCard({ idDiary, title, note, date, refetch }) {
                 {note}
               </Text>
               <Text color="grey" fontSize="14px">
-                {date}
+                {dayjs(date, "YY-MM-DD").format("DD MMM YYYY")}
               </Text>
             </Stack>
           </Link>

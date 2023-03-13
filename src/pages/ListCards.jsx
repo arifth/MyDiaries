@@ -4,7 +4,6 @@ import { Box, Heading, HStack, Button } from "@chakra-ui/react";
 import SearchBox from "../components/SearchBox";
 import cardService from "../services/cardService";
 import CatalogMagic from "../components/BulkSkeleton";
-import { API } from "../services/baseUrl";
 import DiaryCard from "../components/DiaryCard";
 import { useSelector } from "react-redux";
 import ModalCreate from "../components/ModalCreate";
@@ -35,6 +34,8 @@ export default function ListCards() {
 
   const pageCount = Math.ceil(data?.data?.total_data / 10);
 
+  // setPageCount(() => Math.ceil(data?.data?.total_data / 1));
+
   const filter = response?.filter((value) => {
     return value.title.toLowerCase().includes(searchText?.toLowerCase());
   });
@@ -59,21 +60,27 @@ export default function ListCards() {
           </Button>
         </HStack>
         <SearchBox />
-        {isLoading && <CatalogMagic />}
+        {isLoading ? (
+          <CatalogMagic />
+        ) : (
+          <Box display="flex" flexWrap="wrap" gap="2em">
+            {filter !== undefined &&
+              filter?.map((val, id) => (
+                <DiaryCard
+                  refetch={refetch}
+                  key={id}
+                  title={val.title}
+                  note={val.content}
+                  idDiary={val.id}
+                  date={val.updated_at}
+                />
+              ))}
+          </Box>
+        )}
         <Box display="flex" flexWrap="wrap" gap="3em">
-          {filter !== undefined &&
-            filter?.map((val, id) => (
-              <DiaryCard
-                refetch={refetch}
-                key={id}
-                title={val.title}
-                note={val.content}
-                idDiary={val.id}
-                date={val.updated_at}
-              />
-            ))}
+          {" "}
+          <PaginationFix count={pageCount} refetch={refetch} />
         </Box>
-        <PaginationFix count={pageCount} refetch={refetch} />
       </Box>
     </>
   );

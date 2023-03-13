@@ -2,8 +2,10 @@ import React from "react";
 import { Box, Button } from "@chakra-ui/react";
 import { useDispatch } from "react-redux";
 import { NUMBER_CLICKED } from "../redux/searchSlice";
+import { useQueryClient } from "react-query";
 
 export default function PaginationFix({ count, refetch }) {
+  const query = useQueryClient();
   const dispatch = useDispatch();
   const totalPage = [];
   console.log(count);
@@ -12,8 +14,9 @@ export default function PaginationFix({ count, refetch }) {
   }
 
   const handleCLick = (id) => {
-    dispatch(NUMBER_CLICKED(id + 1));
-    refetch();
+    dispatch(NUMBER_CLICKED(2));
+    query.invalidateQueries("listCards");
+    // refetch();
   };
 
   return (

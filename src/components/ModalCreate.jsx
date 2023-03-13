@@ -9,13 +9,16 @@ import {
   Input,
   Flex,
   Textarea,
+  Spinner,
+  Text,
 } from "@chakra-ui/react";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import cardService from "../services/cardService";
+import { useMutation, useQueryClient } from "react-query";
 
-export default function ModalCreate({ isOpen, onClose, idCard, title, note }) {
+export default function ModalCreate({ isOpen, onClose, title, note, refetch }) {
   const dispatch = useDispatch();
   const navigation = useNavigate();
   const [alert, setAlert] = useState(false);
@@ -31,15 +34,19 @@ export default function ModalCreate({ isOpen, onClose, idCard, title, note }) {
     });
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useMutation(async (e) => {
+    e.preventDefault();
     const response = await cardService.createCard(input);
-    console.log(response.status);
-    if (response.status === 201) {
-      setAlert(true);
+    const queryClient = useQueryClient();
+    if (handleSubmit.isSuccess) {
+      alert("succes bro");
+      queryClient.invalidateQueries("listCards");
       onClose();
-      // location.reload();
+      return response;
     }
-  };
+  });
+
+  console.log(handleSubmit.isSuccess);
 
   return (
     <>
@@ -73,12 +80,12 @@ export default function ModalCreate({ isOpen, onClose, idCard, title, note }) {
           <ModalFooter>
             <Button
               backgroundColor={"green.300"}
-              onClick={handleSubmit}
+              onClick={(e) => handleSubmit.mutate(e)}
               width={"100%"}
             >
-              Create note
+              {handleSubmit.isLoading ? <Spinner /> : <Text> Create note</Text>}
             </Button>
-            {alert && <Text>Berhasil Update data</Text>}
+            {handleSubmit.isSuccess && <Text>Berhasil Update data</Text>}
           </ModalFooter>
         </ModalContent>
       </Modal>
